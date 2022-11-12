@@ -49,18 +49,18 @@ public static void gameStartResponse (BufferedReader fromClient, PrintWriter toC
         toClient.println("Only the first letter of the color is displayed. B for Blue, R for\n" +
             "Red, and so forth. When entering guesses you only need to enter the\n"+
             "first character of each color as a capital letter.\n");
-        toClient.println("You have " + GameConfiguration.guessNumber + " guesses to figure out the secret code or you lose the\n" +
+        toClient.print("You have " + GameConfiguration.guessNumber + " guesses to figure out the secret code or you lose the\n" +
                 "game. Are you ready to play? (Y/N): ");
 
 
     }
     public static void newGamePrompt(PrintWriter toClient){
-        toClient.println("Are you ready for another game? (Y/N): ");
+        toClient.print("Are you ready for another game? (Y/N): ");
 
 
     }
     public static void userPrompt (Game runningGame, PrintWriter toClient){
-        toClient.println("You have " + runningGame.getAttempts() + " guesses left.\n"
+        toClient.print("You have " + runningGame.getAttempts() + " guesses left.\n"
                 +"What is your next guess?\n" + "Type in the characters for your guess and press enter.\n" +
                 "Enter guess: ");
 

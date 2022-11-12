@@ -60,7 +60,7 @@ public Game (boolean testing, PrintWriter toClient){
             }
             if(!solved){
                 toClient.println("Sorry, you are out of guesses. You lose, boo-hoo.\n");
-                //System.out.println("The secret code was: " + secretCode + "\n");
+
             }
 
     }
