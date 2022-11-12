@@ -1,5 +1,4 @@
-/* EE422C Assignment #2 submission by
- * Replace <...> with your actual data. 
+/* EE422C Assignment #5 submission by
  * Alexis Torres
  * at39625
  */
