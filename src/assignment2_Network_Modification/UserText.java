@@ -4,30 +4,12 @@
  */
 
 package assignment2_Network_Modification;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 
 
 public class UserText {
 
-//public static void gameStartResponse (BufferedReader fromClient, PrintWriter toClient, Socket connection) throws IOException {
-//        String response;
-//        response = fromClient.readLine();
-//        if(response.equals("Y")){
-//            toClient.println("\nGenerating secret code ...");
-//        }
-//        else {
-//            System.out.println("Client Disconnecting");
-//            fromClient.close();
-//            toClient.close();
-//            connection.close();
-//        }
-//
-//
-//    }
 
     public static void intro (PrintWriter toClient, int user, ClientHandler client){
 

@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
     private Socket client;
     private final BufferedReader fromClient; // Read from the Client
     private final PrintWriter toClient; // Write to the Client
-    private ArrayList <ClientHandler> serverPlayers;
+    private ArrayList <ClientHandler> otherPlayers;
     private ArrayList <String> clientHistory = new ArrayList<>();
     private int attempts;
     private final int name;
@@ -24,6 +24,7 @@ public class ClientHandler implements Runnable {
     private boolean isStartGamePrompt = false;
     private boolean isGuessPrompt = false;
     private boolean solved = false;
+    private boolean playerAcceptedGame = false;
 
 
     public ClientHandler(Socket clientSocket, ArrayList<ClientHandler> otherPlayers, int playerNum) throws IOException {
@@ -31,7 +32,7 @@ public class ClientHandler implements Runnable {
         this.fromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
         this.toClient = new PrintWriter(client.getOutputStream(),true);
         this.name = playerNum;
-        this.serverPlayers = otherPlayers;
+        this.otherPlayers = otherPlayers;
         this.attempts = GameConfiguration.guessNumber;
     }
 
@@ -46,41 +47,62 @@ public class ClientHandler implements Runnable {
 
                 if (fromClient.ready()) {
                     response = fromClient.readLine();
+                    if(response.contains("SAY")) {
+                        int firstSpace = response.indexOf(" ");
+                        if(firstSpace != -1){
+                            String msg = response.substring(firstSpace +1);
+                            System.out.println("[Server]" + " user#" + name + ": " + msg);
+                            sayToLobby(msg);
+                        }
+
+                    }
+                    if(response.equals("QUIT")) {
+                        closeConnection = true;
+                    }
                     if (isStartGamePrompt) {
                         if (!response.equals("Y")) {
-                            closeConnection = true;
-                            clientDisconnect();
-                            break;
-                        } else {
+                            UserText.newGamePrompt(toClient, this);
 
+                        } else {
                             if(!ServerMain.isGameStarted()) {
-                                System.out.println("[Server]" +"user#"+ name + " has started a new game");
+                                System.out.println("[Server]" + " user#" + name + " has started a new game");
+                                playerAcceptedGame = true;
                                 ServerMain.resetGame();
                             }
+                            playerAcceptedGame = true;
                             System.out.println("[Server] Game for user#" + name + " is getting set");
                             toClient.println("\nGenerating secret code ...");
 
                         }
-                    } else if (isGuessPrompt) {
+                    } else if (isGuessPrompt && !response.contains("SAY")) {
                         System.out.println("[Server] Analysing user#"+ name +" response: " + response);
                         Pegs.analyseUserInput(response, this, toClient);
                         if (solved) {
                           ServerMain.declareWinner(name,(GameConfiguration.guessNumber - attempts));
+                          System.out.println("[Server] user#" + name + " has won");
                         }
                     }
-                    if (ServerMain.isGameStarted()) {
+                    if (ServerMain.isGameStarted() && playerAcceptedGame) {
                         UserText.userPrompt(toClient, this);
                     }
                 }
+
             }
 
-        } catch (IOException e) {
-            System.out.println("[Server] Could not read from user#" + name);
-        }
+        } catch (IOException e) {}
+
+
 
 
     }
 
+    private void sayToLobby (String msg){
+        for(ClientHandler e : otherPlayers){
+            if(e.getName() != name){
+                e.printToClient("[user#" + name + "]" + " " + msg);
+            }
+        }
+    }
     public void printToClient (String s){
         toClient.println(s);
     }
@@ -125,13 +147,20 @@ public class ClientHandler implements Runnable {
         attempts--;
     }
 
+    public void setPlayerAcceptedGame(boolean playerAcceptedGame) {
+        this.playerAcceptedGame = playerAcceptedGame;
+    }
+
     public void clientDisconnect() throws IOException {
-        toClient.println("Disconnecting Goodbye ....");
-        fromClient.close();
-        toClient.close();
-//        if(closeConnection){
-//            client.close();
-//        }
+
+        try {
+
+            fromClient.close();
+            toClient.close();
+            client.close();
+            } catch (IOException ex) {
+
+            }
 
     }
 

@@ -23,25 +23,36 @@ public class ServerCommunication implements Runnable{
 
     }
 
-    public void endSession () throws IOException {
-        System.out.println("In endSession function");
-        fromServer.close();
+    public void endSession ()  {
+        System.out.println("Disconnecting Goodbye ....");
+        System.out.println("Come again!");
+        try {
+            fromServer.close();
+            server.close();
+            fromServer.close();
+        } catch (IOException e) {
+            System.out.println("ServerCommunication reader OR writer or ServerConnection already closed");
+        }
     }
 
     @Override
     public void run() {
-        String serverResponse;
+        String serverResponse = "";
             try {
                 while (true) {
-                    if(fromServer.ready()){
+                    if(fromServer.ready()) {
                         serverResponse = fromServer.readLine();
-                        if(serverResponse == null) break;
-                        if(!serverResponse.equals("")) {
+                        if (serverResponse == null) break;
+                        if (!serverResponse.equals("") && !serverResponse.contains("[user#")) {
                             System.out.println("[Server] " + serverResponse);
-                            if(serverResponse.contains("Are you ready") || serverResponse.contains("Enter guess:") ){
+                            if (serverResponse.contains("Are you ready") || serverResponse.contains("Enter guess:")) {
                                 System.out.print("> ");
                                 readyForInput = true;
+
                             }
+                        }else if (serverResponse.contains("[user#")) {
+                            System.out.println("\n" + serverResponse);
+                            System.out.print("> ");
                         }
                         else {
                             System.out.println(serverResponse);
@@ -51,14 +62,7 @@ public class ServerCommunication implements Runnable{
                 }
 
             } catch (IOException e) {
-                System.out.println("Could not read from server or Disconnected");
-            }finally {
-                System.out.println("Jumped out of the loop in ServerCommunication, thread");
-                try {
-                    fromServer.close();
-                } catch (IOException e) {
-                    System.out.println("assignment2_Network_Modification.ServerCommunication reader already closed");
-                }
+                System.out.println("Couldn't Connect....");
             }
 
         }

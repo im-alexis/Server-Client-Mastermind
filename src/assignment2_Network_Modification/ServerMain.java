@@ -20,32 +20,33 @@ public class ServerMain {
     private static boolean gameStarted = false;
 
     public static void main(String[] args) throws IOException{
+       runItUp();
+    }
+    public static void runItUp() throws IOException {
         ServerSocket server = new ServerSocket(6666);
         try{
-            System.out.println("[Server] Server is live. Waiting for connection ....");
+            System.out.println("[Server] Server is live......");
             while (true)  {
+                System.out.println("[Server] Waiting on new connection...");
                 Socket connectionClient = server.accept();//establishes connection
                 ClientHandler connection = new ClientHandler(connectionClient, clients, idNum);
                 System.out.println("[Server] user#" + idNum + " Connected");
                 idNum++;
                 clients.add(connection);
-                System.out.println("[Server] Waiting on new connection...");
                 pool.execute(connection);
-                for (ClientHandler e : clients){
-                    if(e.isCloseConnection()){
-                        System.out.println("user#"+ e.getName() + " has disconnected");
-                        clients.remove(e);
+                cleanClientList();
 
-                    }
-                }
             }
 
         }catch(Exception e){
-            System.out.println(e);
-            System.out.println("There is an error");
+            System.out.println("[Server] AHHHHH SHIT. I GOTTA RESTART .....");
+            server.close();
+            cleanClientList();
+            clients.clear();
         }
         finally {
-            System.out.println("Fok it we ball");
+            System.out.println("[Server] Fok it we ball!");
+            runItUp();
 
         }
     }
@@ -67,6 +68,11 @@ public class ServerMain {
         for (ClientHandler e : clients) {
             e.printToClient("Game Over");
             e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed);
+            e.printToClient("Are you ready for another game? (Y/N): ");
+            e.resetAttempts();
+            e.setPlayerAcceptedGame(false);
+            e.setStartGamePrompt(true);
+            e.setGuessPrompt(false);
 
         }
 
@@ -74,4 +80,23 @@ public class ServerMain {
     public static boolean isGameStarted (){
         return gameStarted;
     }
+
+    private static void cleanClientList () {
+        try {
+            for (ClientHandler e : clients) {
+                if (e.isCloseConnection()) {
+                    System.out.println("[Server]" + " user#" + e.getName() + " has disconnected");
+                    e.clientDisconnect();
+                    clients.remove(e);
+
+                }
+            }
+
+        }catch (IOException e){
+
+        }
+    }
+
 }
+
+
