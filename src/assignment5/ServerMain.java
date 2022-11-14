@@ -67,7 +67,7 @@ public class ServerMain {
         
         for (ClientManager e : clients) {
             e.printToClient("Game Over");
-            e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed);
+            e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed + " attempt(s)");
             e.printToClient("Are you ready for another game? (Y/N): ");
             e.resetAttempts();
             e.setPlayerAcceptedGame(false);

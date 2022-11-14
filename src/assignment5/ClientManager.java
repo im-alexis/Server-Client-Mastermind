@@ -58,7 +58,7 @@ public class ClientManager implements Runnable {
                     if(response.equals("QUIT")) {
                         closeConnection = true;
                     }
-                    if(attempts > GameConfiguration.guessNumber) {
+                    if(attempts > 1) {
                         if (isStartGamePrompt) {
 
                             if (!response.equals("Y")) {
@@ -88,7 +88,7 @@ public class ClientManager implements Runnable {
                         }
                     }
                     else{
-
+                        toClient.println("You're out of guesses");
                     }
                 }
 
