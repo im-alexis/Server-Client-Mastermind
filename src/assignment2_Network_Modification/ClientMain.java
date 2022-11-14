@@ -10,6 +10,7 @@ import java.net.*;
 
 public class ClientMain {
 
+
     public static void main(String[] args) {
 
         try{
@@ -21,9 +22,10 @@ public class ClientMain {
 
             while (true){
 
-            String clientInput = keyboard.readLine();
-            toServer.println(clientInput);
-            if(clientInput.equals("QUIT")) break;
+                String clientInput = keyboard.readLine();
+                toServer.println(clientInput);
+                if (clientInput.equals("QUIT")) break;
+
 
             }
 

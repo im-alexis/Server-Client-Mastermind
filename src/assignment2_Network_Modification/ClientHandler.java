@@ -40,29 +40,49 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         UserText.intro(toClient, name, this);
-        String response;
+        String response = "";
         try {
             while (true) {
-                response = fromClient.readLine();
-                if (isStartGamePrompt){
-                    if (!response.equals("Y")) {
-                        clientDisconnect();
-                        break;
-                    } else {
-                        ServerMain.resetGame();
+
+                if (fromClient.ready()) {
+                    response = fromClient.readLine();
+                    if (isStartGamePrompt) {
+                        if (!response.equals("Y")) {
+                            closeConnection = true;
+                            clientDisconnect();
+                            break;
+                        } else {
+
+                            if(!ServerMain.isGameStarted()) {
+                                System.out.println("[Server]" +"user#"+ name + " has started a new game");
+                                ServerMain.resetGame();
+                            }
+                            System.out.println("[Server] Game for user#" + name + " is getting set");
+                            toClient.println("\nGenerating secret code ...");
+
+                        }
+                    } else if (isGuessPrompt) {
+                        System.out.println("[Server] Analysing user#"+ name +" response: " + response);
+                        Pegs.analyseUserInput(response, this, toClient);
+                        if (solved) {
+                          ServerMain.declareWinner(name,(GameConfiguration.guessNumber - attempts));
+                        }
+                    }
+                    if (ServerMain.isGameStarted()) {
                         UserText.userPrompt(toClient, this);
                     }
                 }
-                if (isGuessPrompt){
-
-                }
-                            }
+            }
 
         } catch (IOException e) {
-            System.out.println("Could not read from user#" + name);
+            System.out.println("[Server] Could not read from user#" + name);
         }
 
 
+    }
+
+    public void printToClient (String s){
+        toClient.println(s);
     }
     public void resetAttempts(){
         this.attempts = GameConfiguration.guessNumber;
@@ -109,9 +129,9 @@ public class ClientHandler implements Runnable {
         toClient.println("Disconnecting Goodbye ....");
         fromClient.close();
         toClient.close();
-        if(closeConnection){
-            client.close();
-        }
+//        if(closeConnection){
+//            client.close();
+//        }
 
     }
 

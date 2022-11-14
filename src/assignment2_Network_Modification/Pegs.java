@@ -72,12 +72,12 @@ public class Pegs {
         if(!client.isSolved() && client.getAttempts() > 0) {
             pegResult = userInput + " -> Result: " + bPeg + "B_" + wPeg + "W";
             client.addToHistory(pegResult);
-            toClient.println("\n" + pegResult + "\n\n");
+            toClient.print("\n" + pegResult + "\n\n");
         }
         else if (client.isSolved() ){
             pegResult = userInput + " -> Result: " + bPeg + "B_" + wPeg + "W";
             client.addToHistory(pegResult);
-            toClient.println("\n" + pegResult);
+            toClient.print("\n" + pegResult);
         } else if (!client.isSolved()  && client.getAttempts() == 0) {
             toClient.println();
         }

@@ -13,21 +13,21 @@ import java.net.Socket;
 
 public class UserText {
 
-public static void gameStartResponse (BufferedReader fromClient, PrintWriter toClient, Socket connection) throws IOException {
-        String response;
-        response = fromClient.readLine();
-        if(response.equals("Y")){
-            toClient.println("\nGenerating secret code ...");
-        }
-        else {
-            System.out.println("Client Disconnecting");
-            fromClient.close();
-            toClient.close();
-            connection.close();
-        }
-
-
-    }
+//public static void gameStartResponse (BufferedReader fromClient, PrintWriter toClient, Socket connection) throws IOException {
+//        String response;
+//        response = fromClient.readLine();
+//        if(response.equals("Y")){
+//            toClient.println("\nGenerating secret code ...");
+//        }
+//        else {
+//            System.out.println("Client Disconnecting");
+//            fromClient.close();
+//            toClient.close();
+//            connection.close();
+//        }
+//
+//
+//    }
 
     public static void intro (PrintWriter toClient, int user, ClientHandler client){
 
@@ -57,13 +57,14 @@ public static void gameStartResponse (BufferedReader fromClient, PrintWriter toC
 
     }
     public static void newGamePrompt(PrintWriter toClient, ClientHandler client){
-        toClient.print("Are you ready for another game? (Y/N): ");
+        toClient.println("Are you ready for another game? (Y/N): ");
         client.setStartGamePrompt(true);
         client.setGuessPrompt(false);
 
+
     }
     public static void userPrompt (PrintWriter toClient, ClientHandler client){
-        toClient.print("You have " + client.getAttempts() + " guesses left.\n"
+        toClient.println("You have " + client.getAttempts() + " guesses left.\n"
                 +"What is your next guess?\n" + "Type in the characters for your guess and press enter.\n" +
                 "Enter guess: ");
         client.setStartGamePrompt(false);
