@@ -27,7 +27,6 @@ public class Pegs {
         int wPeg = 0;
         String pegResult;
         if (userInput.equals("HISTORY")) { // can use different variations of history to access
-            //System.out.println("\nGuess\t\tResult");
             toClient.println();
             for (String s : client.getClientHistory()) {
                 toClient.println( s.substring(0, 4) + "\t\t" + s.substring(16));

@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class ServerMain {
     private static ArrayList<ClientManager> clients = new ArrayList<>();
-    private static ExecutorService pool = Executors.newFixedThreadPool(15);
+    private static ExecutorService pool = Executors.newFixedThreadPool(25);
     private static int idNum = 0;
 
     private static String secretCode;
@@ -41,8 +41,8 @@ public class ServerMain {
         }catch(Exception e){
             System.out.println("[Server] AHHHHH SHIT. I GOTTA RESTART .....");
             server.close();
+            idNum = 0;
             cleanClientList();
-            clients.clear();
         }
         finally {
             System.out.println("[Server] Fok it we ball!");
@@ -64,7 +64,7 @@ public class ServerMain {
     }
 
     public static void declareWinner (int userNum, int attemptsUsed){
-        gameStarted = false;
+        
         for (ClientManager e : clients) {
             e.printToClient("Game Over");
             e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed);
@@ -72,9 +72,10 @@ public class ServerMain {
             e.resetAttempts();
             e.setPlayerAcceptedGame(false);
             e.setStartGamePrompt(true);
+            e.setSolved(false);
             e.setGuessPrompt(false);
-
         }
+        gameStarted = false;
 
     }
     public static boolean isGameStarted (){
@@ -93,7 +94,7 @@ public class ServerMain {
             }
 
         }catch (IOException e){
-
+            System.out.println("couldn't clean the list");
         }
     }
 
