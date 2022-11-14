@@ -3,7 +3,7 @@
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 import java.io.*;
 import java.net.*;
@@ -25,8 +25,6 @@ public class ClientMain {
                 String clientInput = keyboard.readLine();
                 toServer.println(clientInput);
                 if (clientInput.equals("QUIT")) break;
-
-
             }
 
             keyboard.close();

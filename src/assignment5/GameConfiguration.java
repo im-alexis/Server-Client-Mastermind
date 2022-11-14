@@ -4,7 +4,7 @@
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 /* EE422C Assignment #2 
  */

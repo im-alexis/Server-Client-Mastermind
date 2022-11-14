@@ -3,7 +3,7 @@
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,14 +12,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientHandler implements Runnable {
+public class ClientManager implements Runnable {
     private Socket client;
     private final BufferedReader fromClient; // Read from the Client
     private final PrintWriter toClient; // Write to the Client
-    private ArrayList <ClientHandler> otherPlayers;
+    private ArrayList <ClientManager> otherPlayers;
     private ArrayList <String> clientHistory = new ArrayList<>();
     private int attempts;
-    private final int name;
+    private final int clientID;
     private  boolean closeConnection = false;
     private boolean isStartGamePrompt = false;
     private boolean isGuessPrompt = false;
@@ -27,11 +27,11 @@ public class ClientHandler implements Runnable {
     private boolean playerAcceptedGame = false;
 
 
-    public ClientHandler(Socket clientSocket, ArrayList<ClientHandler> otherPlayers, int playerNum) throws IOException {
+    public ClientManager(Socket clientSocket, ArrayList<ClientManager> otherPlayers, int playerNum) throws IOException {
         this.client = clientSocket;
         this.fromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
         this.toClient = new PrintWriter(client.getOutputStream(),true);
-        this.name = playerNum;
+        this.clientID = playerNum;
         this.otherPlayers = otherPlayers;
         this.attempts = GameConfiguration.guessNumber;
     }
@@ -40,7 +40,7 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        UserText.intro(toClient, name, this);
+        UserText.intro(toClient, clientID, this);
         String response = "";
         try {
             while (true) {
@@ -51,10 +51,9 @@ public class ClientHandler implements Runnable {
                         int firstSpace = response.indexOf(" ");
                         if(firstSpace != -1){
                             String msg = response.substring(firstSpace +1);
-                            System.out.println("[Server]" + " user#" + name + ": " + msg);
+                            System.out.println("[Server]" + " user#" + clientID + ": " + msg);
                             sayToLobby(msg);
                         }
-
                     }
                     if(response.equals("QUIT")) {
                         closeConnection = true;
@@ -65,21 +64,21 @@ public class ClientHandler implements Runnable {
 
                         } else {
                             if(!ServerMain.isGameStarted()) {
-                                System.out.println("[Server]" + " user#" + name + " has started a new game");
+                                System.out.println("[Server]" + " user#" + clientID + " has started a new game");
                                 playerAcceptedGame = true;
                                 ServerMain.resetGame();
                             }
                             playerAcceptedGame = true;
-                            System.out.println("[Server] Game for user#" + name + " is getting set");
+                            System.out.println("[Server] Game for user#" + clientID + " is getting set");
                             toClient.println("\nGenerating secret code ...");
 
                         }
                     } else if (isGuessPrompt && !response.contains("SAY")) {
-                        System.out.println("[Server] Analysing user#"+ name +" response: " + response);
+                        System.out.println("[Server] Analysing user#"+ clientID +" response: " + response);
                         Pegs.analyseUserInput(response, this, toClient);
                         if (solved) {
-                          ServerMain.declareWinner(name,(GameConfiguration.guessNumber - attempts));
-                          System.out.println("[Server] user#" + name + " has won");
+                          ServerMain.declareWinner(clientID,(GameConfiguration.guessNumber - attempts));
+                          System.out.println("[Server] user#" + clientID + " has won");
                         }
                     }
                     if (ServerMain.isGameStarted() && playerAcceptedGame) {
@@ -91,15 +90,12 @@ public class ClientHandler implements Runnable {
 
         } catch (IOException e) {}
 
-
-
-
     }
 
     private void sayToLobby (String msg){
-        for(ClientHandler e : otherPlayers){
-            if(e.getName() != name){
-                e.printToClient("[user#" + name + "]" + " " + msg);
+        for(ClientManager e : otherPlayers){
+            if(e.getClientID() != clientID){
+                e.printToClient("[user#" + clientID + "]" + " " + msg);
             }
         }
     }
@@ -110,8 +106,8 @@ public class ClientHandler implements Runnable {
         this.attempts = GameConfiguration.guessNumber;
     }
 
-    public int getName() {
-        return name;
+    public int getClientID() {
+        return clientID;
     }
 
     public int getAttempts() {
@@ -154,14 +150,12 @@ public class ClientHandler implements Runnable {
     public void clientDisconnect() throws IOException {
 
         try {
-
             fromClient.close();
             toClient.close();
             client.close();
             } catch (IOException ex) {
 
             }
-
     }
 
 

@@ -3,7 +3,7 @@
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +13,8 @@ import java.net.Socket;
 public class ServerCommunication implements Runnable{
 
     private Socket server;
-    private volatile BufferedReader fromServer; // Read from the Server
+    private  BufferedReader fromServer; // Read from the Server
 
-    private boolean readyForInput = false;
 
     public ServerCommunication(Socket s) throws IOException {
         this.server = s;
@@ -37,7 +36,7 @@ public class ServerCommunication implements Runnable{
 
     @Override
     public void run() {
-        String serverResponse = "";
+        String serverResponse;
             try {
                 while (true) {
                     if(fromServer.ready()) {
@@ -47,8 +46,6 @@ public class ServerCommunication implements Runnable{
                             System.out.println("[Server] " + serverResponse);
                             if (serverResponse.contains("Are you ready") || serverResponse.contains("Enter guess:")) {
                                 System.out.print("> ");
-                                readyForInput = true;
-
                             }
                         }else if (serverResponse.contains("[user#")) {
                             System.out.println("\n" + serverResponse);
@@ -56,7 +53,6 @@ public class ServerCommunication implements Runnable{
                         }
                         else {
                             System.out.println(serverResponse);
-                            readyForInput = false;
                         }
                     }
                 }

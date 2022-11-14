@@ -3,7 +3,7 @@
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 import java.io.*;
 import java.net.*;
@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerMain {
-    private static ArrayList<ClientHandler> clients = new ArrayList<>();
+    private static ArrayList<ClientManager> clients = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(15);
     private static int idNum = 0;
 
@@ -29,7 +29,7 @@ public class ServerMain {
             while (true)  {
                 System.out.println("[Server] Waiting on new connection...");
                 Socket connectionClient = server.accept();//establishes connection
-                ClientHandler connection = new ClientHandler(connectionClient, clients, idNum);
+                ClientManager connection = new ClientManager(connectionClient, clients, idNum);
                 System.out.println("[Server] user#" + idNum + " Connected");
                 idNum++;
                 clients.add(connection);
@@ -65,7 +65,7 @@ public class ServerMain {
 
     public static void declareWinner (int userNum, int attemptsUsed){
         gameStarted = false;
-        for (ClientHandler e : clients) {
+        for (ClientManager e : clients) {
             e.printToClient("Game Over");
             e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed);
             e.printToClient("Are you ready for another game? (Y/N): ");
@@ -83,9 +83,9 @@ public class ServerMain {
 
     private static void cleanClientList () {
         try {
-            for (ClientHandler e : clients) {
+            for (ClientManager e : clients) {
                 if (e.isCloseConnection()) {
-                    System.out.println("[Server]" + " user#" + e.getName() + " has disconnected");
+                    System.out.println("[Server]" + " user#" + e.getClientID() + " has disconnected");
                     e.clientDisconnect();
                     clients.remove(e);
 

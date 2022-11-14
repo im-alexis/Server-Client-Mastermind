@@ -1,19 +1,15 @@
 /* EE422C Assignment #2 submission by
- * Replace <...> with your actual data.
+ * Modified for Server/Client Application
  * Alexis Torres
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/*
-* Server will print the results to the Client
-*
-* */
 public class Pegs {
     private static boolean isValid(String userInput){
         if(userInput.length() != GameConfiguration.pegNumber){return false;} // if it is not equal to the chars needed then its automatically not valid
@@ -24,7 +20,7 @@ public class Pegs {
         }
         return true;
     }
-    public static void analyseUserInput (String userInput, ClientHandler client, PrintWriter toClient) {
+    public static void analyseUserInput (String userInput, ClientManager client, PrintWriter toClient) {
         ArrayList<Object> bIndex = new ArrayList<>(); // holding the index of the white and black pegs
         ArrayList <Object> wIndex = new ArrayList<>();
         int bPeg = 0;

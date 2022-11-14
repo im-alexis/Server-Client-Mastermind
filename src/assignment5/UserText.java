@@ -1,9 +1,10 @@
-/* EE422C Assignment #5 submission by
+/* EE422C Assignment #2 submission by
+ * Modified for Server/Client Application
  * Alexis Torres
  * at39625
  */
 
-package assignment2_Network_Modification;
+package assignment5;
 import java.io.PrintWriter;
 
 
@@ -11,7 +12,7 @@ import java.io.PrintWriter;
 public class UserText {
 
 
-    public static void intro (PrintWriter toClient, int user, ClientHandler client){
+    public static void intro (PrintWriter toClient, int user, ClientManager client){
 
         toClient.println("Hello user#"+ user +". Welcome to Mastermind.  Here are the rules.\n");
         toClient.println("This is a text version of the classic board game Mastermind.\n");
@@ -38,14 +39,14 @@ public class UserText {
         client.setGuessPrompt(false);
 
     }
-    public static void newGamePrompt(PrintWriter toClient, ClientHandler client){
+    public static void newGamePrompt(PrintWriter toClient, ClientManager client){
         toClient.println("Are you ready for another game? (Y/N): ");
         client.setStartGamePrompt(true);
         client.setGuessPrompt(false);
 
 
     }
-    public static void userPrompt (PrintWriter toClient, ClientHandler client){
+    public static void userPrompt (PrintWriter toClient, ClientManager client){
         toClient.println("You have " + client.getAttempts() + " guesses left.\n"
                 +"What is your next guess?\n" + "Type in the characters for your guess and press enter.\n" +
                 "Enter guess: ");
