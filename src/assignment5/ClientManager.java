@@ -58,31 +58,37 @@ public class ClientManager implements Runnable {
                     if(response.equals("QUIT")) {
                         closeConnection = true;
                     }
-                    if (isStartGamePrompt) {
-                        if (!response.equals("Y")) {
-                            UserText.newGamePrompt(toClient, this);
+                    if(attempts > GameConfiguration.guessNumber) {
+                        if (isStartGamePrompt) {
 
-                        } else {
-                            if(!ServerMain.isGameStarted()) {
-                                System.out.println("[Server]" + " user#" + clientID + " has started a new game");
+                            if (!response.equals("Y")) {
+                                UserText.newGamePrompt(toClient, this);
+
+                            } else {
+                                if (!ServerMain.isGameStarted()) {
+                                    System.out.println("[Server]" + " user#" + clientID + " has started a new game");
+                                    playerAcceptedGame = true;
+                                    ServerMain.resetGame();
+                                }
                                 playerAcceptedGame = true;
-                                ServerMain.resetGame();
-                            }
-                            playerAcceptedGame = true;
-                            System.out.println("[Server] Game for user#" + clientID + " is getting set");
-                            toClient.println("\nGenerating secret code ...");
+                                System.out.println("[Server] Game for user#" + clientID + " is getting set");
+                                toClient.println("\nGenerating secret code ...");
 
+                            }
+                        } else if (isGuessPrompt && !response.contains("SAY")) {
+                            System.out.println("[Server] Analysing user#" + clientID + " response: " + response);
+                            Pegs.analyseUserInput(response, this, toClient);
+                            if (solved) {
+                                ServerMain.declareWinner(clientID, (GameConfiguration.guessNumber - attempts));
+                                System.out.println("[Server] user#" + clientID + " has won");
+                            }
                         }
-                    } else if (isGuessPrompt && !response.contains("SAY")) {
-                        System.out.println("[Server] Analysing user#"+ clientID +" response: " + response);
-                        Pegs.analyseUserInput(response, this, toClient);
-                        if (solved) {
-                          ServerMain.declareWinner(clientID,(GameConfiguration.guessNumber - attempts));
-                          System.out.println("[Server] user#" + clientID + " has won");
+                        if (ServerMain.isGameStarted() && playerAcceptedGame) {
+                            UserText.userPrompt(toClient, this);
                         }
                     }
-                    if (ServerMain.isGameStarted() && playerAcceptedGame) {
-                        UserText.userPrompt(toClient, this);
+                    else{
+
                     }
                 }
 
