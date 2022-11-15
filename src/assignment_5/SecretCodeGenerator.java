@@ -1,4 +1,4 @@
-package assignment5;
+package assignment_5;
 
 import java.util.Random;
 

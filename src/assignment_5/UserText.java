@@ -4,7 +4,7 @@
  * at39625
  */
 
-package assignment5;
+package assignment_5;
 import java.io.PrintWriter;
 
 
