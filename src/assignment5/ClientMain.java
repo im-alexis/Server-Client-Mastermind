@@ -34,14 +34,13 @@ private static InputStreamReader x;
                     if (clientInput.equals("QUIT")) break;
                 }
             }
-
-
-
+            closeClient();
         }catch(Exception e){System.out.println(e);}
     }
 
     public static void closeClient(){
        try {
+           communication.endSession();
            connectedToServer.close();
            toServer.close();
            keyboard.close();

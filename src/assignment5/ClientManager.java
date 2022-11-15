@@ -16,6 +16,7 @@ public class ClientManager implements Runnable {
     private Socket client;
     private final BufferedReader fromClient; // Read from the Client
     private final PrintWriter toClient; // Write to the Client
+    private  InputStreamReader x;
     private ArrayList <ClientManager> otherPlayers;
     private ArrayList <String> clientHistory = new ArrayList<>();
     private int attempts;
@@ -29,7 +30,8 @@ public class ClientManager implements Runnable {
 
     public ClientManager(Socket clientSocket, ArrayList<ClientManager> otherPlayers, int playerNum) throws IOException {
         this.client = clientSocket;
-        this.fromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        this.x =new InputStreamReader(client.getInputStream());
+        this.fromClient = new BufferedReader(x);
         this.toClient = new PrintWriter(client.getOutputStream(),true);
         this.clientID = playerNum;
         this.otherPlayers = otherPlayers;
@@ -55,7 +57,8 @@ public class ClientManager implements Runnable {
                         }
                     }
                     if(response.equals("QUIT")) {
-                        closeConnection = true;
+                        clientDisconnect();
+                        break;
                     }
                     if(attempts > 1) {
                         if (isStartGamePrompt) {
@@ -90,7 +93,6 @@ public class ClientManager implements Runnable {
                         toClient.println("You're out of guesses");
                     }
                 }
-
             }
 
         } catch (IOException e) {}
@@ -156,12 +158,14 @@ public class ClientManager implements Runnable {
         this.playerAcceptedGame = playerAcceptedGame;
     }
 
-    public void clientDisconnect() throws IOException {
+    public void clientDisconnect()  {
 
         try {
+            closeConnection = true;
             fromClient.close();
+            toClient.println("SHUTDOWN");
             toClient.close();
-            client.close();
+            x.close();
             } catch (IOException ex) {
 
             }

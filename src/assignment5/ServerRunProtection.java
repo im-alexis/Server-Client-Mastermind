@@ -1,27 +1,41 @@
 package assignment5;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-public class ServerRunProtection implements Runnable{
-    Scanner keyboard;
-    public ServerRunProtection (){
-        keyboard = new Scanner(System.in);
+public class ServerRunProtection implements Runnable {
+    private static BufferedReader keyboard;
+    private static InputStreamReader x;
+
+    public ServerRunProtection() {
+        x = new InputStreamReader(System.in);
+        keyboard = new BufferedReader(x);
     }
+
     @Override
     public void run() {
         try {
-            while (true){
-            String serverGuardian = keyboard.nextLine();
+            while (true) {
+                String serverGuardian = keyboard.readLine();
                 if (serverGuardian.equals("QUIT")) {
-                   System.out.println("[Server] Are you sure (Y/N)?");
-                   serverGuardian = keyboard.nextLine();
-                   if(serverGuardian.equals("Y")){
-                    ServerMain.closeTheServer();
-                   }
+                    System.out.println("[Server] Are you sure (Y/N)?");
+                    serverGuardian = keyboard.readLine();
+                    if (serverGuardian.equals("Y")) {
+                        ServerMain.closeTheServer();
+                        break;
+                    }
                 }
+                else {
                 System.out.println("[Server] " + serverGuardian + " is not a vaild command");
+                }
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+            System.err.println(e);
+        }
 
     }
+
+
 }
+
+

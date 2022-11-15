@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class ServerMain {
     private static ArrayList<ClientManager> clients = new ArrayList<>();
-    private static ExecutorService pool = Executors.newFixedThreadPool(25);
+    private static ExecutorService pool = Executors.newFixedThreadPool(26);
     private static int idNum = 0;
 
     private static String secretCode;
@@ -31,6 +31,7 @@ public class ServerMain {
             safety.start();
         try{
             System.out.println("[Server] Server is live......");
+
             while (true)  {
                 System.out.println("[Server] Waiting on new connection...");
                 Socket connectionClient = server.accept();//establishes connection
@@ -46,6 +47,11 @@ public class ServerMain {
         }catch(Exception e){
             System.out.println("[Server] AHHHHH SHIT. I GOTTA RESTART .....");
             server.close();
+            try {
+                safety.interrupt();
+            }catch (Exception ex){
+                System.out.println("Protector Thread stopped");
+            }
             idNum = 0;
             cleanClientList();
         }
@@ -58,14 +64,11 @@ public class ServerMain {
 
     public static void closeTheServer () {
         System.out.println("[Server] Server is shutting down...");
-
+        System.out.println("[Server] Disconnecting clients...");
             for (ClientManager e : clients) {
-                System.out.println("[Server] Disconnecting clients...");
                 e.printToClient("Server is shutting down...");
                 e.printToClient("SHUTDOWN");
-                try {
-                    e.clientDisconnect();
-                }catch (IOException ex){}
+                e.clientDisconnect();
 
             }
             System.exit(0);
@@ -126,20 +129,16 @@ public class ServerMain {
         return gameStarted;
     }
 
-    private static void cleanClientList () {
-        try {
-            for (ClientManager e : clients) {
-                if (e.isCloseConnection()) {
-                    System.out.println("[Server]" + " user#" + e.getClientID() + " has disconnected");
-                    e.clientDisconnect();
-                    clients.remove(e);
+    public static void cleanClientList () {
+        for (ClientManager e : clients) {
+            if (e.isCloseConnection()) {
+                System.out.println("[Server]" + " user#" + e.getClientID() + " has disconnected");
+                e.clientDisconnect();
+                clients.remove(e);
 
-                }
             }
-
-        }catch (IOException e){
-            System.out.println("couldn't clean the list");
         }
+
     }
 
 }
