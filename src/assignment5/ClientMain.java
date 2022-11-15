@@ -10,7 +10,7 @@ import java.net.*;
 
 public class ClientMain {
 private static Socket  connectedToServer;
-private static ServerToClientProcessing communication;
+private static CommunicationFromServerProcessing communication;
 private static BufferedReader keyboard;
 private static PrintWriter toServer;
 
@@ -21,7 +21,7 @@ private static InputStreamReader x;
         try{
 
              connectedToServer = new Socket("localhost",6666);
-             communication = new ServerToClientProcessing(connectedToServer);
+             communication = new CommunicationFromServerProcessing(connectedToServer);
              x = new InputStreamReader(System.in);
              keyboard = new BufferedReader(x);
              toServer = new PrintWriter(connectedToServer.getOutputStream(),true);

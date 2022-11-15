@@ -20,7 +20,7 @@ public class Pegs {
         }
         return true;
     }
-    public static void analyseUserInput (String userInput, ServerClientManager client, PrintWriter toClient) {
+    public static void analyseUserInput (String userInput, ClientManager client, PrintWriter toClient) {
         ArrayList<Object> bIndex = new ArrayList<>(); // holding the index of the white and black pegs
         ArrayList <Object> wIndex = new ArrayList<>();
         int bPeg = 0;

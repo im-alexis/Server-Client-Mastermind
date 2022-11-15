@@ -12,12 +12,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ServerClientManager implements Runnable {
+public class ClientManager implements Runnable {
     private Socket client;
     private final BufferedReader fromClient; // Read from the Client
     private final PrintWriter toClient; // Write to the Client
     private  InputStreamReader x;
-    private ArrayList <ServerClientManager> otherPlayers;
+    private ArrayList <ClientManager> otherPlayers;
     private ArrayList <String> clientHistory = new ArrayList<>();
     private int attempts;
     private final int clientID;
@@ -28,7 +28,7 @@ public class ServerClientManager implements Runnable {
     private boolean playerAcceptedGame = false;
 
 
-    public ServerClientManager(Socket clientSocket, ArrayList<ServerClientManager> otherPlayers, int playerNum) throws IOException {
+    public ClientManager(Socket clientSocket, ArrayList<ClientManager> otherPlayers, int playerNum) throws IOException {
         this.client = clientSocket;
         this.x =new InputStreamReader(client.getInputStream());
         this.fromClient = new BufferedReader(x);
@@ -100,7 +100,7 @@ public class ServerClientManager implements Runnable {
     }
 
     private void sayToLobby (String msg){
-        for(ServerClientManager e : otherPlayers){
+        for(ClientManager e : otherPlayers){
             if(e.getClientID() != clientID){
                 e.printToClient("[user#" + clientID + "]" + " " + msg);
             }

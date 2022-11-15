@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class ServerToClientProcessing implements Runnable{
+public class CommunicationFromServerProcessing implements Runnable{
 
     private Socket server;
     private  BufferedReader fromServer; // Read from the Server
 
 
-    public ServerToClientProcessing(Socket s) throws IOException {
+    public CommunicationFromServerProcessing(Socket s) throws IOException {
         this.server = s;
         this.fromServer = new BufferedReader(new InputStreamReader(server.getInputStream()));
 

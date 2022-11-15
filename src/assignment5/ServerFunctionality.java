@@ -12,7 +12,7 @@ public class ServerFunctionality implements Runnable {
 
     private static ExecutorService pool = Executors.newFixedThreadPool(25);
     private static ServerSocket server;
-    private static ArrayList<ServerClientManager> clients = new ArrayList<>();
+    private static ArrayList<ClientManager> clients = new ArrayList<>();
 
     private static int idNum = 0;
 
@@ -36,7 +36,7 @@ public class ServerFunctionality implements Runnable {
             while (true)  {
                 System.out.println("[Server] Waiting on new connection...");
                 Socket connectionClient = server.accept();//establishes connection
-                ServerClientManager connection = new ServerClientManager(connectionClient, clients, idNum);
+                ClientManager connection = new ClientManager(connectionClient, clients, idNum);
                 System.out.println("[Server] user#" + idNum + " Connected");
                 idNum++;
                 clients.add(connection);
@@ -70,7 +70,7 @@ public class ServerFunctionality implements Runnable {
     public static void closeTheServer () {
         System.out.println("[Server] Server is shutting down...");
         System.out.println("[Server] Disconnecting clients...");
-        for (ServerClientManager e : clients) {
+        for (ClientManager e : clients) {
             e.printToClient("Server is shutting down...");
             e.printToClient("SHUTDOWN");
             e.clientDisconnect();
@@ -81,7 +81,7 @@ public class ServerFunctionality implements Runnable {
 
     }
     public static boolean thereIsSomeone (){
-        for (ServerClientManager e : clients) {
+        for (ClientManager e : clients) {
             if(!e.isSolved() && (e.getAttempts() > 1) && e.isPlayerAcceptedGame()){
                 return true;
             }
@@ -103,7 +103,7 @@ public class ServerFunctionality implements Runnable {
 
     public static void declareWinner (int userNum, int attemptsUsed){
 
-        for (ServerClientManager e : clients) {
+        for (ClientManager e : clients) {
             e.printToClient("Game Over");
             e.printToClient( "user#" + userNum + " has guessed the secret code in " + attemptsUsed + " attempt(s)");
             e.printToClient("Are you ready for another game? (Y/N): ");
@@ -119,7 +119,7 @@ public class ServerFunctionality implements Runnable {
 
 
     public static void everyoneLost (){
-        for (ServerClientManager e : clients) {
+        for (ClientManager e : clients) {
             e.printToClient("Game Over");
             e.printToClient("All users out of guesses");
             e.printToClient("Are you ready for another game? (Y/N): ");
@@ -136,7 +136,7 @@ public class ServerFunctionality implements Runnable {
     }
 
     public static void cleanClientList () {
-        for (ServerClientManager e : clients) {
+        for (ClientManager e : clients) {
             if (e.isCloseConnection()) {
                 System.out.println("[Server]" + " user#" + e.getClientID() + " has disconnected");
                 e.clientDisconnect();
