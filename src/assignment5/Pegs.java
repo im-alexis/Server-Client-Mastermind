@@ -20,7 +20,7 @@ public class Pegs {
         }
         return true;
     }
-    public static void analyseUserInput (String userInput, ClientManager client, PrintWriter toClient) {
+    public static void analyseUserInput (String userInput, ServerClientManager client, PrintWriter toClient) {
         ArrayList<Object> bIndex = new ArrayList<>(); // holding the index of the white and black pegs
         ArrayList <Object> wIndex = new ArrayList<>();
         int bPeg = 0;
@@ -40,7 +40,7 @@ public class Pegs {
             return;
         }
         for (int i = 0; i < userInput.length(); i++) { //doing bPegs first makes tracking what is has been found easier
-            if (userInput.substring(i, i + 1).equals(ServerMain.getSecretCode().substring(i, i + 1))) {
+            if (userInput.substring(i, i + 1).equals(ServerFunctionality.getSecretCode().substring(i, i + 1))) {
                 bPeg++;
                 bIndex.add(i);
                 if (bPeg == GameConfiguration.pegNumber) {
@@ -53,7 +53,7 @@ public class Pegs {
             doneWithCol = false;
             if(!bIndex.contains(i)){
                 for(int j = 0; j < userInput.length(); j++) {
-                    if(userInput.substring(i, i+1).equals(ServerMain.getSecretCode().substring(j,j+1))){
+                    if(userInput.substring(i, i+1).equals(ServerFunctionality.getSecretCode().substring(j,j+1))){
                         if(!bIndex.contains(j) && !wIndex.contains(j) && !doneWithCol){ // if the color has not been found and wPeg has not been incremented
                             wPeg++;
                             wIndex.add(j);

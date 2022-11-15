@@ -12,12 +12,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientManager implements Runnable {
+public class ServerClientManager implements Runnable {
     private Socket client;
     private final BufferedReader fromClient; // Read from the Client
     private final PrintWriter toClient; // Write to the Client
     private  InputStreamReader x;
-    private ArrayList <ClientManager> otherPlayers;
+    private ArrayList <ServerClientManager> otherPlayers;
     private ArrayList <String> clientHistory = new ArrayList<>();
     private int attempts;
     private final int clientID;
@@ -28,7 +28,7 @@ public class ClientManager implements Runnable {
     private boolean playerAcceptedGame = false;
 
 
-    public ClientManager(Socket clientSocket, ArrayList<ClientManager> otherPlayers, int playerNum) throws IOException {
+    public ServerClientManager(Socket clientSocket, ArrayList<ServerClientManager> otherPlayers, int playerNum) throws IOException {
         this.client = clientSocket;
         this.x =new InputStreamReader(client.getInputStream());
         this.fromClient = new BufferedReader(x);
@@ -66,10 +66,10 @@ public class ClientManager implements Runnable {
                                 UserText.newGamePrompt(toClient, this);
 
                             } else {
-                                if (!ServerMain.isGameStarted()) {
+                                if (!ServerFunctionality.isGameStarted()) {
                                     System.out.println("[Server]" + " user#" + clientID + " has started a new game");
                                     playerAcceptedGame = true;
-                                    ServerMain.resetGame();
+                                    ServerFunctionality.resetGame();
                                 }
                                 playerAcceptedGame = true;
                                 System.out.println("[Server] Game for user#" + clientID + " is getting set");
@@ -80,15 +80,15 @@ public class ClientManager implements Runnable {
                             System.out.println("[Server] Analysing user#" + clientID + " response: " + response);
                             Pegs.analyseUserInput(response, this, toClient);
                             if (solved) {
-                                ServerMain.declareWinner(clientID, (GameConfiguration.guessNumber - attempts));
+                                ServerFunctionality.declareWinner(clientID, (GameConfiguration.guessNumber - attempts));
                                 System.out.println("[Server] user#" + clientID + " has won");
                             }
                         }
-                        if (ServerMain.isGameStarted() && playerAcceptedGame) {
+                        if (ServerFunctionality.isGameStarted() && playerAcceptedGame) {
                             UserText.userPrompt(toClient, this);
                         }
-                    } else if (ServerMain.thereIsSomeone()) {
-                        ServerMain.everyoneLost();
+                    } else if (ServerFunctionality.thereIsSomeone()) {
+                        ServerFunctionality.everyoneLost();
                     } else {
                         toClient.println("You're out of guesses");
                     }
@@ -100,7 +100,7 @@ public class ClientManager implements Runnable {
     }
 
     private void sayToLobby (String msg){
-        for(ClientManager e : otherPlayers){
+        for(ServerClientManager e : otherPlayers){
             if(e.getClientID() != clientID){
                 e.printToClient("[user#" + clientID + "]" + " " + msg);
             }
