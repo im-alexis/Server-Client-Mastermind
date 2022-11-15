@@ -27,11 +27,13 @@ public class ServerCommunication implements Runnable{
         System.out.println("Come again!");
         try {
             fromServer.close();
-            server.close();
-            fromServer.close();
+
         } catch (IOException e) {
             System.out.println("ServerCommunication reader OR writer or ServerConnection already closed");
+        }finally {
+            ClientMain.closeClient();
         }
+
     }
 
     @Override
@@ -42,6 +44,10 @@ public class ServerCommunication implements Runnable{
                     if(fromServer.ready()) {
                         serverResponse = fromServer.readLine();
                         if (serverResponse == null) break;
+                        if(serverResponse.equals("SHUTDOWN")){
+                            endSession();
+                            break;
+                        }
                         if (!serverResponse.equals("") && !serverResponse.contains("[user#")) {
                             System.out.println("[Server] " + serverResponse);
                             if (serverResponse.contains("Are you ready") || serverResponse.contains("Enter guess:")) {
@@ -56,6 +62,7 @@ public class ServerCommunication implements Runnable{
                         }
                     }
                 }
+
 
             } catch (IOException e) {
                 System.out.println("Couldn't Connect....");

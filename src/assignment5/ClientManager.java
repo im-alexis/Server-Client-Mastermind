@@ -44,7 +44,6 @@ public class ClientManager implements Runnable {
         String response = "";
         try {
             while (true) {
-
                 if (fromClient.ready()) {
                     response = fromClient.readLine();
                     if(response.contains("SAY")) {
@@ -60,7 +59,6 @@ public class ClientManager implements Runnable {
                     }
                     if(attempts > 1) {
                         if (isStartGamePrompt) {
-
                             if (!response.equals("Y")) {
                                 UserText.newGamePrompt(toClient, this);
 
@@ -86,8 +84,9 @@ public class ClientManager implements Runnable {
                         if (ServerMain.isGameStarted() && playerAcceptedGame) {
                             UserText.userPrompt(toClient, this);
                         }
-                    }
-                    else{
+                    } else if (ServerMain.thereIsSomeone()) {
+                        ServerMain.everyoneLost();
+                    } else {
                         toClient.println("You're out of guesses");
                     }
                 }
@@ -114,6 +113,10 @@ public class ClientManager implements Runnable {
 
     public int getClientID() {
         return clientID;
+    }
+
+    public boolean isPlayerAcceptedGame() {
+        return playerAcceptedGame;
     }
 
     public int getAttempts() {

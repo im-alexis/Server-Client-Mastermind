@@ -18,12 +18,17 @@ public class ServerMain {
 
     private static String secretCode;
     private static boolean gameStarted = false;
+    private static ServerSocket server ;
+    private static Thread safety;
 
     public static void main(String[] args) throws IOException{
        runItUp();
     }
     public static void runItUp() throws IOException {
-        ServerSocket server = new ServerSocket(6666);
+            server = new ServerSocket(6666);
+            ServerRunProtection theProtector = new ServerRunProtection();
+            safety = new Thread(theProtector);
+            safety.start();
         try{
             System.out.println("[Server] Server is live......");
             while (true)  {
@@ -49,6 +54,31 @@ public class ServerMain {
             runItUp();
 
         }
+    }
+
+    public static void closeTheServer () {
+        System.out.println("[Server] Server is shutting down...");
+
+            for (ClientManager e : clients) {
+                System.out.println("[Server] Disconnecting clients...");
+                e.printToClient("Server is shutting down...");
+                e.printToClient("SHUTDOWN");
+                try {
+                    e.clientDisconnect();
+                }catch (IOException ex){}
+
+            }
+            System.exit(0);
+
+
+    }
+    public static boolean thereIsSomeone (){
+        for (ClientManager e : clients) {
+           if(!e.isSolved() && (e.getAttempts() > 1) && e.isPlayerAcceptedGame()){
+               return true;
+           }
+        }
+        return false;
     }
 
     public static void resetGame(){
@@ -77,6 +107,20 @@ public class ServerMain {
         }
         gameStarted = false;
 
+    }
+
+    public static void everyoneLost (){
+        for (ClientManager e : clients) {
+            e.printToClient("Game Over");
+            e.printToClient("All users out of guesses");
+            e.printToClient("Are you ready for another game? (Y/N): ");
+            e.resetAttempts();
+            e.setPlayerAcceptedGame(false);
+            e.setStartGamePrompt(true);
+            e.setSolved(false);
+            e.setGuessPrompt(false);
+        }
+        gameStarted = false;
     }
     public static boolean isGameStarted (){
         return gameStarted;

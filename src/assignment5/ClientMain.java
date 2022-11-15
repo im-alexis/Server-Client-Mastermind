@@ -9,30 +9,49 @@ import java.io.*;
 import java.net.*;
 
 public class ClientMain {
+private static Socket  connectedToServer;
+private static ServerCommunication communication;
+private static BufferedReader keyboard;
+private static PrintWriter toServer;
 
+private static InputStreamReader x;
 
     public static void main(String[] args) {
 
         try{
-            Socket connectedToServer = new Socket("localhost",6666);
-            ServerCommunication communication = new ServerCommunication(connectedToServer);
-            BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
-            PrintWriter toServer = new PrintWriter(connectedToServer.getOutputStream(),true);
+
+             connectedToServer = new Socket("localhost",6666);
+             communication = new ServerCommunication(connectedToServer);
+             x = new InputStreamReader(System.in);
+             keyboard = new BufferedReader(x);
+             toServer = new PrintWriter(connectedToServer.getOutputStream(),true);
             new Thread(communication).start();
 
             while (true){
-
-                String clientInput = keyboard.readLine();
-                toServer.println(clientInput);
-                if (clientInput.equals("QUIT")) break;
+                if(keyboard.ready()) {
+                    String clientInput = keyboard.readLine();
+                    toServer.println(clientInput);
+                    if (clientInput.equals("QUIT")) break;
+                }
             }
 
-            keyboard.close();
-            toServer.close();
-            communication.endSession();
-            connectedToServer.close();
-            System.exit(0);
+
 
         }catch(Exception e){System.out.println(e);}
     }
+
+    public static void closeClient(){
+       try {
+           connectedToServer.close();
+           toServer.close();
+           keyboard.close();
+           x.close();
+           System.exit(0);
+
+       }catch (IOException e){
+            System.out.println("IN THE CATCH");
+       }
+
+    }
+
 }
