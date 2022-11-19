@@ -82,7 +82,7 @@ public class ServerFunctionality implements Runnable {
     }
     public static boolean thereIsSomeone (){
         for (ClientManager e : clients) {
-            if(!e.isSolved() && (e.getAttempts() > 1) && e.isPlayerAcceptedGame()){
+            if(!e.isSolved() && (e.getAttempts() > 0) && e.isPlayerAcceptedGame()){
                 return true;
             }
         }

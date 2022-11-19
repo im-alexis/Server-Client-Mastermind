@@ -87,7 +87,7 @@ public class ClientManager implements Runnable {
                         if (ServerFunctionality.isGameStarted() && playerAcceptedGame) {
                             UserText.userPrompt(toClient, this);
                         }
-                    } else if (ServerFunctionality.thereIsSomeone()) {
+                    } else if (!ServerFunctionality.thereIsSomeone()) {
                         ServerFunctionality.everyoneLost();
                     } else {
                         toClient.println("You're out of guesses");
@@ -111,6 +111,7 @@ public class ClientManager implements Runnable {
     }
     public void resetAttempts(){
         this.attempts = GameConfiguration.guessNumber;
+        this.clientHistory.clear();
     }
 
     public int getClientID() {
